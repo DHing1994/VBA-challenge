@@ -1,0 +1,88 @@
+Sub setup()
+    Dim Worksheetname As String
+    Dim i As Long
+    Dim openv As Double
+    Dim closev As Double
+    Dim changev As Double
+    Dim ws As Worksheet
+    Dim lastrow As Long
+    Dim tick As Integer
+    Dim Total As LongLong
+    Dim maxValue As Double
+    Dim minValue As Double
+    Dim Perc As Double
+    Dim MaxTotal As LongLong
+    Dim ticktot As String
+    Dim tickmax As String
+    Dim tickmin As String
+    
+        For Each ws In Worksheets
+            Worksheetname = ws.Name
+            Worksheets(Worksheetname).Activate
+            openv = Cells(2, 3)
+            lastrow = Cells(Rows.Count, 1).End(xlUp).Row
+            tick = 2
+            Cells(1, 9) = "Ticker"
+            Cells(1, 10) = "Yearly Change"
+            Cells(1, 11) = "Percent Change"
+            Cells(1, 12) = "Total Stock Volume"
+            Cells(2, 14) = "Greatest Percentage Increase"
+            Cells(3, 14) = "Greatest Percentage Decrease"
+            Cells(4, 14) = "Greatest Total Volume"
+            Cells(1, 16) = "Ticker"
+            Cells(1, 15) = "Value"
+            
+            maxValue = 0
+            minValue = 0
+            MaxTotal = 0
+            
+                For i = 3 To lastrow + 1
+                    Total = Total + Cells(i - 1, 7)
+                        If Cells(i, 1) <> Cells(i - 1, 1) Then
+                                Cells(tick, 9) = Cells(i - 1, 1)
+                                
+                                closev = Cells(i - 1, 6).Value
+                                
+                                Cells(tick, 10) = closev - openv
+                                
+                                If openv <> 0 Then
+                                
+                                    Perc = Round(100 * (Cells(tick, 10) / openv), 2)
+                                    Cells(tick, 11) = Perc
+                                    
+                                    If Perc > maxValue Then
+                                        maxValue = Perc
+                                        tickmax = Cells(tick, 9)
+                                    End If
+                                    
+                                    If Perc < minValue Then
+                                        minValue = Perc
+                                        tickmin = Cells(tick, 9)
+                                    End If
+                                    
+                                    If MaxTotal < Total Then
+                                        MaxTotal = Total
+                                        ticktot = Cells(tick, 9)
+                                    End If
+                                    
+                                End If
+                                                   
+                                Cells(tick, 12) = Total
+                                openv = Cells(i, 3).Value
+                                Total = 0
+                                
+                                tick = tick + 1
+                                
+                    End If
+                Next i
+                Cells(2, 15) = maxValue
+                Cells(2, 16) = tickmax
+                Cells(3, 15) = minValue
+                Cells(3, 16) = tickmin
+                Cells(4, 15) = MaxTotal
+                Cells(4, 16) = ticktot
+        Next ws
+        
+            
+End Sub
+
